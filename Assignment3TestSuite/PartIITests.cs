@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Assignment3TestSuite;
@@ -20,22 +18,18 @@ public class Response
 
 public class Category
 {
-    [JsonPropertyName("cid")]
-    public int Id { get; set; }
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [JsonPropertyName("cid")] public int Id { get; set; }
+
+    [JsonPropertyName("name")] public string Name { get; set; }
 }
 
 public class PartIITests
 {
-    private const int Port = 5000;
+    private const int Port = 3000;
 
     //////////////////////////////////////////////////////////
-    /// 
     /// Testing request constraints
-    /// 
     ////////////////////////////////////////////////////////// 
-
     [Fact]
     public void Constraint_ConnectionWithoutRequest_ShouldConnect()
     {
@@ -129,7 +123,7 @@ public class PartIITests
             Method = "update",
             Path = "testing",
             Date = DateTimeOffset.Now.ToString(),
-            Body = (new { cid = 1, Name = "Beverages" }).ToJson()
+            Body = new { cid = 1, Name = "Beverages" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -180,7 +174,6 @@ public class PartIITests
 
 
         Assert.Contains("illegal body", response.Status.ToLower());
-
     }
 
     /* Echo Test */
@@ -200,19 +193,12 @@ public class PartIITests
         var response = client.ReadResponse();
 
         Assert.Equal("Hello World", response.Body);
-
     }
 
     //////////////////////////////////////////////////////////
-    /// 
-    /// Testing API 
-    /// 
+    /// Testing API
     ////////////////////////////////////////////////////////// 
-
     /* Path tests  */
-
-
-
     [Fact]
     public void Constraint_RequestWithInvalidPathId_ShouldReturnBadRequest()
     {
@@ -243,7 +229,7 @@ public class PartIITests
             Method = "create",
             Path = "/api/categories/1",
             Date = UnixTimestamp(),
-            Body = (new { Name = "" }).ToJson()
+            Body = new { Name = "" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -264,7 +250,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories",
             Date = UnixTimestamp(),
-            Body = (new { Name = "" }).ToJson()
+            Body = new { Name = "" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -296,7 +282,6 @@ public class PartIITests
     }
 
 
-
     /* Read tests */
 
     [Fact]
@@ -315,11 +300,11 @@ public class PartIITests
         var response = client.ReadResponse();
 
         var categories = new List<object>
-            {
-                new {cid = 1, name = "Beverages"},
-                new {cid = 2, name = "Condiments"},
-                new {cid = 3, name = "Confections"}
-            };
+        {
+            new { cid = 1, name = "Beverages" },
+            new { cid = 2, name = "Condiments" },
+            new { cid = 3, name = "Confections" }
+        };
 
         var expectedResponse = new
         {
@@ -348,7 +333,7 @@ public class PartIITests
         var expectedResponse = new Response
         {
             Status = "1 Ok",
-            Body = (new { cid = 1, name = "Beverages" }.ToJson())
+            Body = new { cid = 1, name = "Beverages" }.ToJson()
         };
 
         Assert.Equal(expectedResponse.ToJson(), response.ToJson());
@@ -385,7 +370,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories/1",
             Date = UnixTimestamp(),
-            Body = (new { cid = 1, name = "BeveragesTesting" }).ToJson()
+            Body = new { cid = 1, name = "BeveragesTesting" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -403,7 +388,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories/1",
             Date = UnixTimestamp(),
-            Body = (new { cid = 1, name = "Beverages" }).ToJson()
+            Body = new { cid = 1, name = "Beverages" }.ToJson()
         };
 
         client.SendRequest(resetRequest.ToJson());
@@ -420,7 +405,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories/1",
             Date = UnixTimestamp(),
-            Body = (new { cid = 1, name = "BeveragesTesting" }).ToJson()
+            Body = new { cid = 1, name = "BeveragesTesting" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -448,7 +433,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories/1",
             Date = UnixTimestamp(),
-            Body = (new { cid = 1, name = "Beverages" }).ToJson()
+            Body = new { cid = 1, name = "Beverages" }.ToJson()
         };
 
         client.SendRequest(resetRequest.ToJson());
@@ -465,7 +450,7 @@ public class PartIITests
             Method = "update",
             Path = "/api/categories/123",
             Date = UnixTimestamp(),
-            Body = (new { cid = 1, name = "BeveragesTesting" }).ToJson()
+            Body = new { cid = 1, name = "BeveragesTesting" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -487,7 +472,7 @@ public class PartIITests
             Method = "create",
             Path = "/api/categories",
             Date = UnixTimestamp(),
-            Body = (new { name = "Testing" }).ToJson()
+            Body = new { name = "Testing" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -525,7 +510,7 @@ public class PartIITests
             Method = "create",
             Path = "/api/categories",
             Date = UnixTimestamp(),
-            Body = (new { name = "TestingDeleteCategory" }).ToJson()
+            Body = new { name = "TestingDeleteCategory" }.ToJson()
         };
 
         client.SendRequest(request.ToJson());
@@ -563,7 +548,6 @@ public class PartIITests
     }
 
 
-
     /**********************************************************
      *
      *  Helper Methods
@@ -587,12 +571,14 @@ public static class Util
 {
     public static string ToJson(this object data)
     {
-        return JsonSerializer.Serialize(data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        return JsonSerializer.Serialize(data,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
     }
 
     public static T FromJson<T>(this string element)
     {
-        return JsonSerializer.Deserialize<T>(element, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        return JsonSerializer.Deserialize<T>(element,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
     }
 
     public static void SendRequest(this TcpClient client, string request)
@@ -605,21 +591,21 @@ public static class Util
     {
         var strm = client.GetStream();
         //strm.ReadTimeout = 250;
-        byte[] resp = new byte[2048];
+        var resp = new byte[2048];
         using (var memStream = new MemoryStream())
         {
-            int bytesread = 0;
+            var bytesread = 0;
             do
             {
                 bytesread = strm.Read(resp, 0, resp.Length);
                 memStream.Write(resp, 0, bytesread);
-
             } while (bytesread == 2048);
 
             var responseData = Encoding.UTF8.GetString(memStream.ToArray());
             //return JsonSerializer.Deserialize<Response>(responseData);
             // if the naming policy is used you need to do the same on the server side
-            return JsonSerializer.Deserialize<Response>(responseData, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            return JsonSerializer.Deserialize<Response>(responseData,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

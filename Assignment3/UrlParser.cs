@@ -9,29 +9,38 @@ namespace Assignment3
     public class UrlParser
     {
         public bool HasId { get; set; }
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Path { get; set; }
         public bool ParseUrl(string url)
         {
-            if (string.IsNullOrWhiteSpace(url)) return false;
-            var split = url.Split('/').Where(s => !string.IsNullOrEmpty(s)).ToArray();
-            if (split.Length < 2 || split.Length > 3) return false;
+            if (string.IsNullOrWhiteSpace(url))
+                return false;
 
-            if (split.Length == 2)
+            var segments = url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+            // Must start with api and have at least 2 segments (api + resource)
+            if (segments.Length < 2 || segments[0] != "api")
+                return false;
+
+            Path = "/" + string.Join('/', segments.Take(2));
+
+            if (segments.Length == 3)
             {
-                HasId = false;
+                if (int.TryParse(segments[2], out int id))
+                {
+                    HasId = true;
+                    Id = id;
+                }
+                else
+                {
+                    return false; // invalid id
+                }
             }
             else
             {
-                var last = split[^1];
-                HasId = int.TryParse(last, out int tempId);
-                if (HasId)
-                {
-                    Id = tempId.ToString();
-                }
+                HasId = false;
             }
 
-            Path = "/" + string.Join('/', split[0], split[1]);
             return true;
         }
     }

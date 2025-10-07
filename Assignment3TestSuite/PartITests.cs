@@ -1,17 +1,21 @@
 ﻿using System;
 using Xunit;
 using Assignment3;
+using Xunit.Abstractions;
 
 namespace Assignment3TestSuite;
 
 
-public class PartITests
+public class PartITests(ITestOutputHelper output)
 {
-    //////////////////////////////////////////////////////////
-    /// 
+    /////////////////////////////////////////////////////////
     /// Testing UrlParser class
-    /// 
-    ////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////
+
+    private readonly ITestOutputHelper _output = output;
+
+    // xUnit injects ITestOutputHelper via constructor
+
 
     [Fact]
     public void UrlParser_ValidUrlWithoutId_ShouldParseCorrectly()
@@ -21,6 +25,9 @@ public class PartITests
         var url = "/api/categories";
         // Act
         var result = urlParser.ParseUrl(url);
+
+        _output.WriteLine($"Result: {result}, Path: {urlParser.Path}");
+        
         // Assert
         Assert.True(result);
         Assert.False(urlParser.HasId);

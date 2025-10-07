@@ -1,37 +1,48 @@
-﻿using Assignment3.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Assignment3.Interfaces;
 
-namespace Assignment3
+namespace Assignment3;
+
+public class CategoryService : ICategoryService
 {
-    public class CategoryService : ICategoryService
+    private readonly List<Category> _categories =
+    [
+        new() { Id = 1, Name = "Beverages" },
+        new() { Id = 2, Name = "Condiments" },
+        new() { Id = 3, Name = "Confections" }
+    ];
+
+    public List<Category> GetCategories()
     {
-        public bool CreateCategory(int id, string name)
-        {
-            throw new NotImplementedException();
-        }
+        return _categories;
+    }
 
-        public bool DeleteCategory(int id)
-        {
-            throw new NotImplementedException();
-        }
+    public Category? GetCategory(int cid)
+    {
+        return _categories.FirstOrDefault(c => c.Id == cid);
+    }
 
-        public List<Category> GetCategories()
-        {
-            throw new NotImplementedException();
-        }
+    public bool UpdateCategory(int id, string newName)
+    {
+        var category = _categories.FirstOrDefault(c => c.Id == id);
+        if (category == null) return false;
+        category.Name = newName;
+        return true;
+    }
 
-        public Category GetCategory(int cid)
-        {
-            throw new NotImplementedException();
-        }
+    public bool DeleteCategory(int id)
+    {
+        var category = _categories.FirstOrDefault(c => c.Id == id);
+        if (category == null) return false;
+        _categories.Remove(category);
+        return true;
+    }
 
-        public bool UpdateCategory(int id, string newName)
-        {
-            throw new NotImplementedException();
-        }
+    public bool CreateCategory(int id, string name)
+    {
+        if (_categories.Any(c => c.Id == id)) return false;
+        _categories.Add(new Category { Id = id, Name = name });
+        return true;
     }
 }
